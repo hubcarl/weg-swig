@@ -8,6 +8,10 @@ module.exports = function(layer, basepath, encoding) {
     basepath = (basepath) ? path.normalize(basepath) : null;
 
     ret.resolve = function(to, from) {
+        // fix page 相同资源依赖
+        var id = to.replace(layer.config.fisRootDir + '/', "");
+        layer.load(id);
+
         to = layer.resolve(to);
 
         if (basepath) {
