@@ -47,8 +47,8 @@ exports.compile = function(compiler, args) {
     });
 
     return (ignore ? '  try {\n' : '') +
-        '_output += _swig._w(_ctx.fiswig, '+ file+',' + JSON.stringify(w_args) + ', {' +
-        'resolveFrom: "' + parentFile + '"' +',config: _ctx.fiswig.config' +
+        '_output += _swig._w(_ctx.weg, '+ file+',' + JSON.stringify(w_args) + ', {' +
+        'resolveFrom: "' + parentFile + '"' +',config: _ctx.weg.config' +
         '})(' +
         ((onlyCtx && w) ? w : (!w ? '_ctx' : '_utils.extend({}, _ctx, ' + w + ')')) +
         ');\n' +

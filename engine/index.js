@@ -123,7 +123,7 @@ Swig.prototype._w = Swig.prototype._widget = function(layer, id, attr, options) 
 
             compiled: function(locals) {
                 var fn = self.compileFile(pathname, options);
-                var layer = locals.fiswig;
+                var layer = locals.weg;
                 layer && layer.load(id);
                 return fn.apply(this, arguments);
             }

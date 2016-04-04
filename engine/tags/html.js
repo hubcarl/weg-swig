@@ -15,8 +15,8 @@ exports.compile = function(compiler, args, content, parents, options, blockName)
         }
     });
 
-    var code = (framework ? '_ctx.fiswig.setFramework("' + framework + '");' : '') + compiler(content, parents, options, blockName);
-    return '_output += "<html ' + (attrs.join(' ').replace(/"/g, "\\\"")) + '>";' + code + '_output += _ctx.fiswig.BIGPIPE_HOOK + "</html>";';
+    var code = (framework ? '_ctx.weg.setFramework("' + framework + '");' : '') + compiler(content, parents, options, blockName);
+    return '_output += "<html ' + (attrs.join(' ').replace(/"/g, "\\\"")) + '>";' + code + '_output += _ctx.weg.BIGPIPE_HOOK + "</html>";';
 };
 
 exports.parse = function(str, line, parser, types) {

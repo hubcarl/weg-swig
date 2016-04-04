@@ -42,7 +42,7 @@ exports.init = function(settings, app) {
 
         new Engine(options, prototols)
 
-            .makeStream(filepath, utils.mixin(locals, {fiswig: prototols}))
+            .makeStream(filepath, utils.mixin(locals, {weg: prototols}))
 
             // 合并 tpl 流 和 bigpipe 流。
             .pipe(combine(prototols))

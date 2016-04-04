@@ -50,8 +50,8 @@ exports.compile = function(compiler, args) {
     return (ignore ? '  try {\n' : '') +
         'var w_args = ' + JSON.stringify(w_args) + ';' +
         'if (_ctx.isQuickingMode){w_args.mode="quickling"}' +
-        '_output += _swig._w(_ctx.fiswig, '+ file+', w_args, {' +
-        'resolveFrom: "' + parentFile + '"' +',config: _ctx.fiswig.config' +
+        '_output += _swig._w(_ctx.weg, '+ file+', w_args, {' +
+        'resolveFrom: "' + parentFile + '"' +',config: _ctx.weg.config' +
         '})(' +
         ((onlyCtx && w) ? w : (!w ? '_ctx' : '_utils.extend({}, _ctx, ' + w + ')')) +
         ');\n' +

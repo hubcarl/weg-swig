@@ -14,7 +14,7 @@ var exports = module.exports;
  */
 exports.compile = function(compiler, args, content, parents, options, blockName) {
 
-    var code = '_ctx.fiswig.load(' + args.pop() + ');';
+    var code = '_ctx.weg.load(' + args.pop() + ');';
 
     console.log('>>>>require compile:' + code);
 

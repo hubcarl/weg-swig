@@ -8,7 +8,7 @@ exports.compile = function(compiler, args, content, parents, options, blockName)
 
     //console.log('[script] fisRootDir:' + config.fisRootDir  + ' projectDir:'+config.projectDir + ' viewsDir:' + config.viewsDir);
 
-    var code = '_ctx.fiswig.addScript((function () { var _output = "";' +
+    var code = '_ctx.weg.addScript((function () { var _output = "";' +
         compiler(content, parents, options, blockName) +
         ' return _output; })());';
     //console.log('>>>script:' + code);
