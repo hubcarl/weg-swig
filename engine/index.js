@@ -16,7 +16,8 @@ var tags  = [
     "head",
     "feature",
     "featureelse",
-    "spage"
+    "spage",
+    "pagelet"
 ];
 var swigInstance;
 
@@ -25,35 +26,34 @@ var swigInstance;
  * - `views` 模板根目录
  * - `loader` 模板加载器，默认自带，可选。
  *
- * layer 参数，为 swig-view 的中间层，用来扩展模板能力。
+ * resource 参数，为 swig-view 的中间层，用来扩展模板能力。
  * 比如通过 addScript, addStyle 添加的 js/css 会自动在页面开头结尾处才输出。
  *
  * 更多细节请查看 swig-view
  *
  * @return {Readable Stream}
  */
-var SwigWrap = module.exports = function SwigWrap(options, layer) {
+var SwigWrap = module.exports = function SwigWrap(options, resource) {
 
     //console.log('>>>options0' + JSON.stringify(options));
 
     if (!(this instanceof SwigWrap)) {
-        return new SwigWrap(options, layer);
+        return new SwigWrap(options, resource);
     }
 
     // 重写 loader, 让模板引擎，可以识别静态资源标示。如：static/lib/jquery.js
-    options.loader = options.loader || loader(layer, options.views);
+    options.loader = options.loader || loader(resource, options.views);
 
     var swig = this.swig = swigInstance = options.cache && swigInstance || new Swig(options);
     this.options = swig.options;
 
-    console.log('>>>SwigWrap options1' + JSON.stringify(options));
+    //console.log('>>>SwigWrap options1' + JSON.stringify(options));
     //console.log('>>>options2' + JSON.stringify(this.options));
 
     tags.forEach(function (tag) {
         var t = require('./tags/' + tag);
         swig.setTag(tag, t.parse, t.compile, t.ends, t.blockLevel || false);
     });
-
 
     this.buzy = false;
 };
@@ -99,20 +99,20 @@ SwigWrap.prototype.destroy = function() {
 };
 
 // 这个方法在 tags/widget.js 中调用。
-Swig.prototype._w = Swig.prototype._widget = function(layer, id, attr, options) {
+Swig.prototype._w = Swig.prototype._widget = function(resource, id, attr, options) {
     var self = this;
-    var pathname = layer.resolve(id);
+    var pathname = resource.resolve(id);
 
-    console.log('----pathName:' +pathname + ' options:' + JSON.stringify(options));
-    if (!layer.supportBigPipe() || !attr.mode || attr.mode === 'sync') {
-        layer.load(id);
+    //console.log('----pathName:' +pathname + ' options:' + JSON.stringify(options));
+    if (!resource.supportBigPipe() || !attr.mode || attr.mode === 'sync' ) {
+        resource.load(id);
         return this.compileFile(pathname, options);
     }
 
     return function(locals) {
         var container = attr['container'] || attr['for'];
 
-        layer.addPagelet({
+        resource.addQuicklingPagelet({
             container: container,
             model: attr.model,
             id: attr.id,
@@ -123,8 +123,8 @@ Swig.prototype._w = Swig.prototype._widget = function(layer, id, attr, options) 
 
             compiled: function(locals) {
                 var fn = self.compileFile(pathname, options);
-                var layer = locals.weg;
-                layer && layer.load(id);
+                var resource = locals.resource;
+                resource && resource.load(id);
                 return fn.apply(this, arguments);
             }
         });

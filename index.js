@@ -1,11 +1,11 @@
-var response = require('./lib/response.js');
-var layer = require('./lib/layer.js');
-var combine = require('./lib/combine.js');
-var utils = require('./lib/util.js');
+var Response = require('./lib/response.js');
+var Resource = require('./lib/resource.js');
+var Combine = require('./lib/combine.js');
+var Utils = require('./lib/util.js');
+var Engine = require('./engine/index.js');
 
 
 exports.init = function(settings, app) {
-    var Engine;
 
     if (arguments.length === 1) {
         app = settings;
@@ -17,35 +17,34 @@ exports.init = function(settings, app) {
 
     settings.views = app.get('views');
 
-    // 加载engine的index.js
-    Engine = utils.resolveEngine(settings.engine || 'engine');
+    //// 加载engine的index.js
+    //Engine = Utils.resolveEngine(settings.engine || 'engine');
 
     return function(filepath, locals, done) {
 
-        console.log('>>>filePath:' +filepath);
+
         // 关于 response 来源，请查看 hackResponse 方法,以及 lib/reponse.js
-        var res = locals.response;
+        var response = locals.response;
 
         // 创建一个新对象。
-        var options = utils.mixin({}, settings);
+        var options = Utils.mixin({}, settings);
 
-        // 初始化 layer 层。
-        // 提供 addScript, addStyle, resolve, addPagelet 各种接口。
-        // 用来扩展模板层能力。
-        var prototols = layer(res, settings);
+        // 初始化 resource 层, 提供 addScript, addStyle, resolve, addQuicklingPagelet 各种接口,用来扩展模板层能力
+        var resource = Resource(response, settings);
+
+        // swig 模板绑定数据
+        var swigData = Utils.mixin(locals, {resource: resource});
+
+        //console.log('>>>engine swigData %o %o, %o',filepath, locals,  swigData);
 
         var sentData = false;
 
-        //console.log('>>>>>options:' + JSON.stringify(options) + ' prototols:' + JSON.stringify(prototols));
+        new Engine(options, resource)
 
-        //console.log('>>>engine local %o', locals);
-
-        new Engine(options, prototols)
-
-            .makeStream(filepath, utils.mixin(locals, {weg: prototols}))
+            .makeStream(filepath, swigData)
 
             // 合并 tpl 流 和 bigpipe 流。
-            .pipe(combine(prototols))
+            .pipe(Combine(resource))
 
             .on('data', function() {
                 sentData = true;
@@ -55,11 +54,11 @@ exports.init = function(settings, app) {
                 // 属于 chunk error
                 if (sentData) {
                     if (typeof settings.chunkErrorHandler === 'function') {
-                        settings.chunkErrorHandler(error, res);
+                        settings.chunkErrorHandler(error, response);
                     } else {
-                        res.write('<script>window.console && console.error("chunk error", "'+ error.message.replace(/"/g, "\\\"") +'")</script>');
+                        response.write('<script>window.console && console.error("chunk error", "'+ error.message.replace(/"/g, "\\\"") +'")</script>');
                     }
-                    res.end();
+                    response.end();
                 } else {
                     // 交给 express 去处理错误吧。
                     done(error);
@@ -67,7 +66,7 @@ exports.init = function(settings, app) {
             })
 
             // 直接输出到 response.
-            .pipe(res);
+            .pipe(response);
     };
 };
 
@@ -79,8 +78,8 @@ function hackResponse(app) {
 
     app.use(function hackResponse(req, res, next) {
         var origin = res.__proto__;
-        response.__proto__ = origin;
-        res.__proto__ = response;
+        Response.__proto__ = origin;
+        res.__proto__ = Response;
         origin = null;
 
         next();

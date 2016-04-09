@@ -29,8 +29,7 @@ var ignore = 'ignore',
  * @param {literal}     [only]    Restricts to <strong>only</strong> passing the <code>with context</code> as local variables–the included template will not be aware of any other local variables in the parent template. For best performance, usage of this option is recommended if possible.
  * @param {literal}     [ignore missing] Will output empty string if not found instead of throwing an error.
  */
-exports.compile = function(compiler, args) {
-    //console.log(' args:' +JSON.stringify(args));
+exports.compile = function(compiler, args, content, parents, options, blockName) {
     var file = args.shift(),
         onlyIdx = args.indexOf(only),
         onlyCtx = onlyIdx !== -1 ? args.splice(onlyIdx, 1) : false,
@@ -46,13 +45,17 @@ exports.compile = function(compiler, args) {
         if (w.k) w_args[w.k] = w.v;
     });
 
-    return (ignore ? '  try {\n' : '') +
-        '_output += _swig._w(_ctx.weg, '+ file+',' + JSON.stringify(w_args) + ', {' +
-        'resolveFrom: "' + parentFile + '"' +',config: _ctx.weg.config' +
+    //console.log('widget:parents',args, parents, options, blockName);
+
+    var result= (ignore ? '  try {\n' : '') +
+        '_output += _swig._w(_ctx.resource, '+ file+',' + JSON.stringify(w_args) + ', {' +
+        'resolveFrom: "' + parentFile + '"' +',config: _ctx.resource.config' +
         '})(' +
         ((onlyCtx && w) ? w : (!w ? '_ctx' : '_utils.extend({}, _ctx, ' + w + ')')) +
         ');\n' +
         (ignore ? '} catch (e) {}\n' : '');
+    //console.log('---order---tags-widget:', result);
+    return result;
 };
 
 exports.parse = function(str, line, parser, types, stack, opts) {

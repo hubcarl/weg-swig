@@ -1,7 +1,7 @@
 var fs = require('fs'),
     path = require('path');
 
-module.exports = function(layer, basepath, encoding) {
+module.exports = function(resource, basepath, encoding) {
     var ret = {};
 
     encoding = encoding || 'utf8';
@@ -9,10 +9,10 @@ module.exports = function(layer, basepath, encoding) {
 
     ret.resolve = function(to, from) {
         // fix page 相同资源依赖
-        var id = to.replace(layer.config.fisRootDir + '/', "");
-        layer.load(id);
+        var id = to.replace(resource.config.fisRootDir + '/', "");
+        resource.load(id);
 
-        to = layer.resolve(to);
+        to = resource.resolve(to);
 
         if (basepath) {
             from = basepath;
@@ -23,7 +23,7 @@ module.exports = function(layer, basepath, encoding) {
     };
 
     ret.load = function(identifier, cb) {
-        //console.log('>>>weg loader identifier----' + identifier);
+        //console.log('>>>resource loader identifier----' + identifier);
         if (!fs || (cb && !fs.readFile) || !fs.readFileSync) {
             throw new Error('Unable to find file ' + identifier + ' because there is no filesystem to read from.');
         }

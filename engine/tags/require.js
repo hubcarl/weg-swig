@@ -14,9 +14,9 @@ var exports = module.exports;
  */
 exports.compile = function(compiler, args, content, parents, options, blockName) {
 
-    var code = '_ctx.weg.load(' + args.pop() + ');';
+    var code = '_ctx.resource.load(' + args.pop() + ');';
 
-    console.log('>>>>require compile:' + code);
+    //console.log('>>>>require compile:' + code);
 
     return code;
 };
