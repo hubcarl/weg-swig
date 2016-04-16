@@ -203,7 +203,7 @@ locals: {},
 fis:
 ResourceApi {
 root: '/Users/sky/.weg-tmp/www',
-prefix: 'client',
+client: 'client',
 maps: [Object] },
 
 bigpipe:
@@ -255,7 +255,7 @@ destroy: [Function],
 fis:
 ResourceApi {
 root: '/Users/sky/.weg-tmp/www',
-prefix: 'client',
+client: 'client',
 maps: [Object] },
 bigpipe:
 BigPipe {
@@ -275,9 +275,9 @@ domain: null,
 _maxListeners: undefined },
 views: '/Users/sky/.weg-tmp/www/client/views',
 config:
-{ fisRootDir: '/Users/sky/.weg-tmp/www',
-projectDir: 'client',
-viewsDir: '/Users/sky/.weg-tmp/www/client/views' },
+{ www: '/Users/sky/.weg-tmp/www',
+client: 'client',
+views: '/Users/sky/.weg-tmp/www/client/views' },
 
 
 swig:

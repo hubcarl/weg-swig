@@ -6,7 +6,7 @@ exports.compile = function(compiler, args, content, parents, options, blockName)
     //console.log('script parents %o', parents);
     //console.log('script options %o', options);
 
-    //console.log('[script] fisRootDir:' + config.fisRootDir  + ' projectDir:'+config.projectDir + ' viewsDir:' + config.viewsDir);
+    //console.log('[script] www:' + config.www  + ' client:'+config.client + ' views:' + config.views);
 
     var code = '_ctx.resource.addScript((function () { var _output = "";' +
         compiler(content, parents, options, blockName) +

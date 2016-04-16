@@ -20,8 +20,12 @@ exports.init = function(settings, app) {
     //// 加载engine的index.js
     //Engine = Utils.resolveEngine(settings.engine || 'engine');
 
-    return function(filepath, locals, done) {
+    return function(filePath, locals, done) {
 
+
+        var fileAbsUrl = Utils.getFileAbsUrl(filePath, app.get('view engine'));
+
+        //console.log('filePath:' , filePath, fileAbsUrl);
 
         // 关于 response 来源，请查看 hackResponse 方法,以及 lib/reponse.js
         var response = locals.response;
@@ -35,13 +39,13 @@ exports.init = function(settings, app) {
         // swig 模板绑定数据
         var swigData = Utils.mixin(locals, {resource: resource});
 
-        //console.log('>>>engine swigData %o %o, %o',filepath, locals,  swigData);
+        //console.log('>>>engine swigData %o %o, %o',fileAbsUrl, locals,  swigData);
 
         var sentData = false;
 
         new Engine(options, resource)
 
-            .makeStream(filepath, swigData)
+            .makeStream(fileAbsUrl, swigData)
 
             // 合并 tpl 流 和 bigpipe 流。
             .pipe(Combine(resource))

@@ -9,7 +9,7 @@ module.exports = function(resource, basepath, encoding) {
 
     ret.resolve = function(to, from) {
         // fix page 相同资源依赖
-        var id = to.replace(resource.config.fisRootDir + '/', "");
+        var id = to.replace(resource.config.www + '/', "");
         resource.load(id);
 
         to = resource.resolve(to);
