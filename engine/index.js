@@ -6,6 +6,8 @@ var util = require('util');
 var fs = require('fs');
 var Swig = require('swig').Swig;
 var loader = require('./lib/loader.js');
+var helper = require('./lib/helper.js');
+
 var tags  = [
     "script",
     "style",
@@ -118,9 +120,14 @@ SwigWrap.prototype.destroy = function() {
 
 // 这个方法在 tags/widget.js 中调用。
 Swig.prototype._w = Swig.prototype._widget = function(resource, id, attr, options) {
+
+    // 叠加自定义属性
+    options.locals = helper.extend(options.locals || {}, attr);
+
+    //console.log('locals:', options.locals);
+
     var self = this;
     var pathname = resource.resolve(id);
-
     //console.log('----pathName:' +pathname + ' options:' + JSON.stringify(options));
     if (!resource.supportBigPipe() || !attr.mode || attr.mode === 'sync' ) {
         resource.load(id);

@@ -1,27 +1,12 @@
 var ignore = 'ignore',
     missing = 'missing',
     only = 'only',
-    attrs = ["id", "mode", "group", "for", "model"];
+    attrs = ["id", "mode", "group","container", "for", "model"];
 
 /**
  * Includes a template partial in place. The template is rendered within the current locals variable context.
  *
  * @alias widget
- *
- * @example
- * // food = 'burritos';
- * // drink = 'lemonade';
- * {% widget "./partial.html" %}
- * // => I like burritos and lemonade.
- *
- * @example
- * // my_obj = { food: 'tacos', drink: 'horchata' };
- * {% widget "./partial.html" id="pagelet_id" mode="async" with my_obj%}
- * // => I like tacos and horchata.
- *
- * @example
- * {% widget "/this/file/does/not/exist" ignore missing %}
- * // => (Nothing! empty string)
  *
  * @param {string|var}  file      The path, relative to the template root, to render into the current context.
  * @param {literal}     [with]    Literally, "with".
@@ -45,15 +30,11 @@ exports.compile = function(compiler, args, content, parents, options, blockName)
         if (w.k) w_args[w.k] = w.v;
     });
 
-    //console.log('widget:parents',args, parents, options, blockName);
+    //console.log('widget:args',w_args);
 
-    var result= (ignore ? '  try {\n' : '') +
-        '_output += _swig._w(_ctx.resource, '+ file+',' + JSON.stringify(w_args) + ', {' +
-        'resolveFrom: "' + parentFile + '"' +',config: _ctx.resource.config' +
-        '})(' +
-        ((onlyCtx && w) ? w : (!w ? '_ctx' : '_utils.extend({}, _ctx, ' + w + ')')) +
-        ');\n' +
-        (ignore ? '} catch (e) {}\n' : '');
+    var result =
+        '_output += _swig._w(_ctx.resource, ' + file + ',' + JSON.stringify(w_args)
+        + ', {' + 'resolveFrom: "' + parentFile + '"' + ',config: _ctx.resource.config' + '})(_ctx);'
     //console.log('---order---tags-widget:', result);
     return result;
 };
@@ -74,12 +55,12 @@ exports.parse = function(str, line, parser, types, stack, opts) {
             k: ''
         };
 
-        if (~attrs.indexOf(k)) {
+        //if (~attrs.indexOf(k)) {
             out.v = token.match.replace(/^("|')?(.*)\1$/g, '$2');
             out.k = k;
             this.out.push(out);
             v = ''; //reset
-        }
+        //}
 
     });
 
@@ -90,10 +71,10 @@ exports.parse = function(str, line, parser, types, stack, opts) {
             return true;
         }
 
-        if (~attrs.indexOf(token.match)) {
+        //if (~attrs.indexOf(token.match)) {
             k = token.match;
             return false;
-        }
+        //}
 
         if (!w && token.match === 'with') {
             w = true;
